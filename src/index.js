@@ -16,6 +16,7 @@ type DatesType = {
   focusedInput: 'startDate' | 'endDate',
   onDatesChange: (date: { date?: ?moment, startDate?: ?moment, endDate?: ?moment }) => void,
   isDateBlocked: (date: moment) => boolean,
+  iso: boolean,
   onDisableClicked: (date: moment) => void
 }
 
@@ -29,6 +30,7 @@ type MonthType = {
   focusedMonth: moment,
   onDatesChange: (date: { date?: ?moment, startDate?: ?moment, endDate?: ?moment }) => void,
   isDateBlocked: (date: moment) => boolean,
+  iso: boolean,
   onDisableClicked: (date: moment) => void
 }
 
@@ -41,6 +43,7 @@ type WeekType = {
   startOfWeek: moment,
   onDatesChange: (date: { date?: ?moment, startDate?: ?moment, endDate?: ?moment }) => void,
   isDateBlocked: (date: moment) => boolean,
+  iso: boolean,
   onDisableClicked: (date: moment) => void
 }
 
@@ -117,11 +120,12 @@ export const Week = (props: WeekType) => {
     startOfWeek,
     onDatesChange,
     isDateBlocked,
+    iso,
     onDisableClicked
   } = props;
 
   const days = [];
-  const endOfWeek = startOfWeek.clone().endOf('isoweek');
+  const endOfWeek = startOfWeek.clone().endOf(iso ? 'isoweek' : 'week');
 
   moment.range(startOfWeek, endOfWeek).by('days', (day: moment) => {
     const onPress = () => {
@@ -194,6 +198,7 @@ export const Month = (props: MonthType) => {
     endDate,
     focusedInput,
     currentDate,
+    iso,
     focusedMonth,
     onDatesChange,
     isDateBlocked,
@@ -202,9 +207,9 @@ export const Month = (props: MonthType) => {
 
   const dayNames = [];
   const weeks = [];
-  const startOfMonth = focusedMonth.clone().startOf('month').startOf('isoweek');
+  const startOfMonth = focusedMonth.clone().startOf('month').startOf(iso ? 'isoweek' : 'week');
   const endOfMonth = focusedMonth.clone().endOf('month');
-  const weekRange = moment.range(currentDate.clone().startOf('isoweek'), currentDate.clone().endOf('isoweek'));
+  const weekRange = moment.range(currentDate.clone().startOf(iso ? 'isoweek' : 'week'), currentDate.clone().endOf(iso ? 'isoweek' : 'week'));
 
   weekRange.by('days', (day: moment) => {
     dayNames.push(
@@ -228,6 +233,7 @@ export const Month = (props: MonthType) => {
         startOfWeek={week}
         onDatesChange={onDatesChange}
         isDateBlocked={isDateBlocked}
+        iso={iso}
         onDisableClicked={onDisableClicked}
       />
     );
@@ -281,6 +287,7 @@ export default class Dates extends Component {
           onDatesChange={this.props.onDatesChange}
           isDateBlocked={this.props.isDateBlocked}
           onDisableClicked={this.props.onDisableClicked}
+          iso={this.props.iso}
         />
       </View>
     );
